@@ -141,8 +141,8 @@ def wavelen2rgb(Wavelength, MaxIntensity=100):
 class fluorophore:
     def __init__(self, fluo_name, fluo_df, laser_list, ch_list):
         self.fluo_name = fluo_name
-        self.ex_spec = np.array(fluo_df.ex)
-        self.em_spec = np.array(fluo_df.em)
+        self.ex_spec = fluo_df['w', 'ex']
+        self.em_spec = fluo_df['w', 'em']
 
 
 FORMAT = "%(asctime)s| %(levelname)s [%(filename)s: - %(funcName)20s]  %(message)s"
@@ -154,12 +154,14 @@ plt.rcParams['figure.facecolor'] = '#272b30'
 
 
 fluo_list = ['mTFP1', 'fluo_4']
-ex_list = [456, 488]
+ex_list = [456, 515]
 ch_dict = {'ch_1':[492, 510],
            'ch_2':[510, 600]}
 
 # read CSV spectra
 spectra_dict = {}
+fluo_list = []
+
 for root, dirs, files in os.walk(os.getcwd()):
     for file in files:
         if file.endswith('.csv') and file.split('.')[0] in fluo_list:
@@ -171,6 +173,10 @@ for root, dirs, files in os.walk(os.getcwd()):
             if raw_csv['em'].max() <= 1:
               raw_csv['ex'] = raw_csv['ex'] *100
               raw_csv['em'] = raw_csv['em'] *100
+
+            
+
+
 
             spectra_dict.update({file.split('.')[0]: raw_csv})
             logging.info('{} spectra uploaded'.format(file.split('.')[0]))
