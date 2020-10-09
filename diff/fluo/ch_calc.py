@@ -7,7 +7,9 @@ Channels crosstalk calculator
 
 import sys
 import os
+import random
 import logging
+import yaml
 
 import numpy as np
 import pandas as pd
@@ -140,9 +142,35 @@ def wavelen2rgb(Wavelength, MaxIntensity=100):
 
 class fluorophore:
     def __init__(self, fluo_name, fluo_df, laser_list, ch_list):
+        logging.info('==> {} spectra uploaded! <=='.format(fluo_name))
         self.fluo_name = fluo_name
-        self.ex_spec = fluo_df['w', 'ex']
-        self.em_spec = fluo_df['w', 'em']
+        self.ex_spec = fluo_df[['w', 'ex']]
+        self.em_spec = fluo_df[['w', 'em']]
+        self.laser_list = laser_list
+        self.ch_list = ch_list
+
+        self.ex_dict = {}
+        for laser in self.laser_list:
+            try:
+                self.ex_lvl = int(self.ex_spec.loc[self.ex_spec['w'] == laser, 'ex'])
+            except ValueError:
+                logging.fatal('{} DOESN`T excite at {} nm!'.format(self.fluo_name, laser))
+                continue
+            
+            self.ex_dict.update({laser: self.ex_lvl})
+
+            logging.info('{}|{} nm = {}'.format(self.fluo_name, laser, self.ex_lvl))
+
+
+        self.ch_int = {}
+        for self.ch_num in self.ch_list:
+            self.ch_band = self.ch_list[self.ch_num]
+            self.band = self.em_spec.loc[(self.em_spec['w'] >= self.ch_band[0]) & (self.em_spec['w'] <= self.ch_band[1]), 'em']
+            self.band_int = int(self.band.sum())
+            self.ch_int.update({self.ch_num: self.band_int})
+
+            logging.info('{} integral int. in band {}nm = {}'.format(self.fluo_name, self.ch_band, self.band_int))
+        
 
 
 FORMAT = "%(asctime)s| %(levelname)s [%(filename)s: - %(funcName)20s]  %(message)s"
@@ -153,14 +181,15 @@ plt.style.use('dark_background')
 plt.rcParams['figure.facecolor'] = '#272b30'
 
 
-fluo_list = ['mTFP1', 'fluo_4']
+
+fluo_list = ['fluo_4', 'mTFP1']
 ex_list = [456, 515]
-ch_dict = {'ch_1':[492, 510],
-           'ch_2':[510, 600]}
+ch_dict = {'ch_1':[475, 510],
+           'ch_2':[515, 600]}
 
 # read CSV spectra
 spectra_dict = {}
-fluo_list = []
+mol_list = []
 
 for root, dirs, files in os.walk(os.getcwd()):
     for file in files:
@@ -174,28 +203,9 @@ for root, dirs, files in os.walk(os.getcwd()):
               raw_csv['ex'] = raw_csv['ex'] *100
               raw_csv['em'] = raw_csv['em'] *100
 
-            
-
-
-
+            mol_list.append(fluorophore(file.split('.')[0], raw_csv, ex_list, ch_dict))
             spectra_dict.update({file.split('.')[0]: raw_csv})
-            logging.info('{} spectra uploaded'.format(file.split('.')[0]))
 
-
-# ex lvl
-ch_talk = {}
-for fluo in fluo_list:
-    fluo_spectra = spectra_dict[fluo]
-    for laser in ex_list:
-        ex_lvl = int(fluo_spectra.loc[fluo_spectra['w'] == laser, 'ex'])
-        logging.info('{}|{} nm = {}'.format(fluo, laser, ex_lvl))
-#     for ch in ch_dict:
-#         ch_bandpass = ch_dict[ch]
-#         print(fluo_spectra.index[fluo_spectra['w'] >= ch_bandpass[0] and fluo_spectra['w'] <= ch_bandpass[1]].tolist())
-
-
-
-# crosstalk
 
 
 # build plots
