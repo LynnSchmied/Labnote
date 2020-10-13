@@ -97,7 +97,7 @@ HEK 293 cells
 
 |Time|35 mm|wells 1-2|wells 3-4|
 |-|-|-|-|
-|Day 0|seed 15 ul|seed 15 ul|seed 10 ul|
+|Day 0|seed 20-30 ul|seed 15 ul|seed 20 ul|
 |Day 1|growth|growth|growth|
 |Day 2|growth|transfection|growth|
 |Day 3|replace medium|glass 1 imaging|growth|
