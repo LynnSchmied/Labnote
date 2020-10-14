@@ -156,11 +156,8 @@ class fluorophore:
             except ValueError:
                 logging.fatal('{} DOESN`T excite at {} nm!'.format(self.fluo_name, laser))
                 continue
-            
             self.ex_dict.update({laser: self.ex_lvl})
-
             logging.info('{}|{} nm = {}'.format(self.fluo_name, laser, self.ex_lvl))
-
 
         self.ch_int = {}
         for self.ch_num in self.ch_list:
@@ -169,8 +166,7 @@ class fluorophore:
             self.band_int = int(self.band.sum())
             self.ch_int.update({self.ch_num: self.band_int})
 
-            logging.info('{} integral int. in band {}nm = {}'.format(self.fluo_name, self.ch_band, self.band_int))
-        
+            logging.info('{} integral int.|{}nm = {}'.format(self.fluo_name, self.ch_band, self.band_int))
 
 
 FORMAT = "%(asctime)s| %(levelname)s [%(filename)s: - %(funcName)20s]  %(message)s"
@@ -181,16 +177,18 @@ plt.style.use('dark_background')
 plt.rcParams['figure.facecolor'] = '#272b30'
 
 
+# read settings file
+with open('settings.yml') as f:
+    settings_dict = yaml.safe_load(f)
+    logging.info('Settings YAML file uploaded!')
 
-fluo_list = ['fluo_4', 'mTFP1']
-ex_list = [456, 515]
-ch_dict = {'ch_1':[475, 510],
-           'ch_2':[515, 600]}
+fluo_list = settings_dict['fluo_list']
+ex_list = settings_dict['ex_list']
+ch_dict = settings_dict['ch_reg']
+
 
 # read CSV spectra
-spectra_dict = {}
-mol_list = []
-
+mol_dict = {}
 for root, dirs, files in os.walk(os.getcwd()):
     for file in files:
         if file.endswith('.csv') and file.split('.')[0] in fluo_list:
@@ -203,21 +201,40 @@ for root, dirs, files in os.walk(os.getcwd()):
               raw_csv['ex'] = raw_csv['ex'] *100
               raw_csv['em'] = raw_csv['em'] *100
 
-            mol_list.append(fluorophore(file.split('.')[0], raw_csv, ex_list, ch_dict))
-            spectra_dict.update({file.split('.')[0]: raw_csv})
+            mol_dict.update({file.split('.')[0]: fluorophore(file.split('.')[0], raw_csv, ex_list, ch_dict)})
 
+
+# channels ration calc
+mol_1 = mol_dict[fluo_list[0]] 
+mol_2 = mol_dict[fluo_list[1]]
+
+for ch in ch_dict:
+    ch_ratio = round(mol_1.ch_int[ch] / mol_2.ch_int[ch], 3)
+    logging.info('Ch. {} {} em./{} em. ratio = {}'.format(ch_dict[ch], mol_1.fluo_name, mol_2.fluo_name, ch_ratio))
+
+    for ex_laser in ex_list:
+        try:
+            A = round(mol_1.ex_dict[ex_laser] / mol_2.ex_dict[ex_laser], 3)
+            # logging.info('  {}nm A factor ({} ex./{} ex.) = {}'.format(ex_laser, mol_1.fluo_name, mol_2.fluo_name, A))
+            int_ratio = round(ch_ratio * A, 3)
+
+            logging.info('  Ch. {} {} em./{} em. ex. {}nm corrected (A={}) ratio = {}'.format(ch_dict[ch], mol_1.fluo_name, mol_2.fluo_name, ex_laser, A, int_ratio))
+
+        except ZeroDivisionError:
+            logging.fatal('  {}nm A factor ({} ex./{} ex.) DOESN`t exist, {} ex. is zero!'.format(ex_laser, mol_1.fluo_name, mol_2.fluo_name, mol_2.fluo_name))
+            continue
 
 
 # build plots
-for fluo in fluo_list:
-    fluo_spectra = spectra_dict[fluo]
-    plt.plot(fluo_spectra.w, fluo_spectra.em,  # emission
+for fluo in mol_dict:
+    fluo_spectra = mol_dict[fluo]
+    plt.plot(fluo_spectra.em_spec.w, fluo_spectra.em_spec.em,  # emission
              label='{}, em'.format(fluo),
-             color=wavelen2rgb(fluo_spectra.loc[fluo_spectra['em'].idxmax(), 'w'], 1))
-    plt.plot(fluo_spectra.w, fluo_spectra.ex,  # excitation
+             color=wavelen2rgb(fluo_spectra.em_spec.loc[fluo_spectra.em_spec['em'].idxmax(), 'w'], 1))
+    plt.plot(fluo_spectra.ex_spec.w, fluo_spectra.ex_spec.ex,  # excitation
              label='{}, ex'.format(fluo),
              linestyle='--',
-             color=wavelen2rgb(fluo_spectra.loc[fluo_spectra['em'].idxmax(), 'w'], 1))
+             color=wavelen2rgb(fluo_spectra.em_spec.loc[fluo_spectra.em_spec['em'].idxmax(), 'w'], 1))
 
 for ch in ch_dict:
     ch_band = ch_dict[ch]
