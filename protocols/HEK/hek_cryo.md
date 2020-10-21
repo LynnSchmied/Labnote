@@ -53,3 +53,28 @@ Protocol for cryoconservation of the HEK 293 cells culture.
 2.2. Remove all old medium from a flask
 
 2.3. Add 1 ml of Trypsin-EDTA to a flask and wash cells 
+
+2.4. Add 2.5 ml of Trypsin-EDTA
+
+2.5. Incubation 3' in CO2-incubator
+
+2.6. Add 1.5 ml of DMEM+ in flask
+
+*Note: gently mix cell suspension*
+
+2.7. Transfer cell suspension into 4x1.5 ml eppendorfs by 1 ml
+
+2.8. CF 3000 RPM 3'
+
+2.9. Remove supernatant from each eppendorf and resuspend cells in 250 ul CryoDMEM
+
+**Warning: CryoDMEM should be cold (+4), place it to the work area from fridge directly before resuspending**
+
+2.10. Transfer all cells suspension into cryotubes
+
+*Note: aliquote cells suspension into one (1 ml) or two (by 0.5 ml) cryotubes*
+
+2.11. Freeze the cells in nitrogen vapor in 2 h and then transfer tubes to cryobank
+
+*Note: we use non-woven fabric bag that fix on inner side of the Dewar's vessel cap*
+**Warning: DO NOT  close Dewar's vessel tightly!**
