@@ -4,17 +4,20 @@ Lab Notes
 Lab 404 laboratory notebook, Department of Molecular biophysics, Bogomoletz Institute of Physiology.
 
 ## Structure of lab notes
-In this notebook using Markdown markup for text notes and CSV sheets format for storing reagents compositions and chemicals/equipment lists.
+This notebook using Markdown markup for text notes and CSV sheets format for storing reagents compositions and chemicals/equipment lists.
 
 There are three main directories:
- 1. Projects
- 2. Protocols
- 3. Reagents
+ 1. diary 
+ 1. projects
+ 2. protocols
+ 3. reagents
 
+## Diary
+Contain daily notes files with everyday lab activity description and CSV sheets with chemicals/expended supplies lists.
 
 ## Projects
 Contain individual directories for each project.
-Each project folders must have unique tag and year in name and contain head file (**research_design.md**) with detail description of project and individual folders for daily notes and results files.
+Each project folders must have unique tag and year in name and contain head file (**rational.md**), experiments plan file with detail description of reserach design and individual folder for experiments results.
 
 ## Protocols
 Descriptions of standard protocols for laboratory manipulations. Presence of detailed protocol will simplify writing of future work notes (just insert reference to standard protocol).
