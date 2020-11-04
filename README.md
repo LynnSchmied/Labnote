@@ -7,10 +7,10 @@ Lab 404 laboratory notebook, Department of Molecular biophysics, Bogomoletz Inst
 This notebook using Markdown markup for text notes and CSV sheets format for storing reagents compositions and chemicals/equipment lists.
 
 There are three main directories:
- 1. diary 
- 1. projects
- 2. protocols
- 3. reagents
+ 1. **diary** 
+ 1. **projects**
+ 2. **protocols**
+ 3. **reagents**
 
 ## Diary
 Contain daily notes files with everyday lab activity description and CSV sheets with chemicals/expended supplies lists.
