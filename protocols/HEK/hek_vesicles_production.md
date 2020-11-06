@@ -32,10 +32,10 @@ Protocol for production of HEK 293 cells plasma membrane vesicles with chloride 
 | Waste glass         | 50-100 ml chemical glass     | for waste                        |
 
 
-| **Reagent**          | Description                                     | Note                                         |
-|----------------------|-------------------------------------------------|----------------------------------------------|
-| Vesiculation Buffer  | chloride salts solution for vesicles production | take aliquot from a fridge                   |
-| 30% PBS              | buffered salt solution                          | take aliquot from a fridge                   |
+| **Reagent**          | Description                                     | Note                      |
+|----------------------|-------------------------------------------------|---------------------------|
+| Vesiculation Buffer  | chloride salts solution for vesicles production | take aliquot from a fridge|
+| 30% PBS              | buffered salt solution                          | take aliquot from a fridge|
 
 1.3. Take Vesiculation Buffer and 30% PBS aliquots from a fridge and put it outside the BSC for \~30-40'
 
