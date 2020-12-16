@@ -1,11 +1,13 @@
 Lipofectamine 2000 transfection of neuronal cells
 =================================================
 
+*Borys Olifirov, 2020*
+
 Protocol for **Lipofectamine 2000** transfection of the hippocampal neurons cell culture (12-20 DIV)
 
 *Note: all values for TWO wells of the 12-well culture plate*
 
-Borys Olifirov, 2020
+
 
 
 ## Protocol
@@ -15,7 +17,7 @@ Borys Olifirov, 2020
 
 1.2. Check for required equipment and reagents (tables below):
 
-| **Equipment**       | Description                  | Note                                        | 
+| **Equipment**       | Description                  | Note                                        |
 |---------------------|------------------------------|---------------------------------------------|
 | Pipette             | 1 ml, 200 ul, 20 ul          |                                             |
 | Tips                | 1 ml (blue), 200 ul (yellow) |                                             |
@@ -26,7 +28,7 @@ Borys Olifirov, 2020
 | Waste glass         | 50-100 ml chemical glass     | for waste
 
 
-| **Reagent**     | Description                     | Note                                         | 
+| **Reagent**     | Description                     | Note                                         |
 |-----------------|---------------------------------|----------------------------------------------|
 | MEM+            | standard culture medium         | take tube with aliquot from a fridge         |
 | MEM-            | MEM without serum & antibiotics | take tube with aliquot from a fridge         |
