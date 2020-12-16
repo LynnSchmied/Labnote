@@ -16,7 +16,7 @@ AuM nanoparticles test confocal imaging
 <img src="pic/abs.png" width="50%">
 *(Abdelhalim et. al., 2012)*
 
-В то же время максимум эмиссии при возбуждении 308 nm лежит в диапазоне 400-450 nm и величина эмиссии обратно пропорциональна размеру частиц.
+В то же время максимум эмиссии при возбуждении 308 nm лежит в диапазоне 410-450 nm и величина эмиссии обратно пропорциональна размеру частиц.
 
 **Emission spectra at 308 nm excitation**
 <img src="pic/ems.png" width="50%">
