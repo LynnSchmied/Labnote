@@ -3,23 +3,72 @@ Plasmids cloning
 *13.02.2021-??.??.2021*
 
 ## Design
+Все конструкты в векторе N1, селективный маркер *KanR/NeoR* (неомицин 50 ug/ml).
+
+Использован штамм E. Coli DH5α.
+
+Протокол получения компетентных клеток и трансформации Nishimura et al., 1990 (doi: 10.1093/nar/18.20.6169), масса ДНК для трансформации \~100 pg. Всего наработать необходимо 6 консруктов, для каждого три десятикратных разведения трансформантов (18 чашек).
+
+*Note: по данным файла кельвинатора есть еще x10 аликвот компетентных клеток от 14.07.2017 в box 1.*
+
+Набор для выделения Thermo Fisher GeneJET Plasmid Maxiprep Kit (#K0492).
+
+**Warning: kit expiry date is 09.2016(((**
 
 ## Selected plasmids
+Plasmid   |Signed C (ug/ul)|Approx. volume|Rack cell
+:--------:|:--------------:|:------------:|:-------:
+HPCA-RFP  |0.2             |10 ul         |1
+HPCA-CFP  |0.75            |15 ul         |10 
+HPCA-EYFP |0.7             |2 ul          |19
+HPCA-EYFP |0.7             |10 ul         |20
+HPCA-EYFP |?               |2             |21
+EYFP-Mem  |0.45            |-             |28
+EYFP-Mem  |0.45            |-             |29
+EYFP-Mem  |0.45            |2 ul          |30
+EYFP-Mem  |0.45?           |20 ul         |31
+CFP-YFP   |0.9             |2 ul          |37
+CFP-YFP   |?               |150 ul        |38
+NCALD-EYFP|1               |10 ul         |46        
 
-Plasmid|Vector|Selective marker|Signed C|Approx. volume|Rack cell
--|-|-|-|-
-HPCA-RFP|N1 (?)||-|10 ul|1
-HPCA-EYFP|N1||0.7|5 ul|10
-HPCA-EYFP|N1||0.7|15 ul|11
-EYFP-Mem|N1||0.45|0 ul|19
-EYFP-Mem|N1||0.45|0 ul|20
-EYFP-Mem|N1||0.45|0 ul|21
-EYFP-Mem|N1||?|20 ul|22
-EYFP-Mem|N1||?|5 ul|23
-CFP-YFP|N1||0.9|5 ul|28
-CFP-YFP|N1||-|80 ul|29
+**Warning: 31 не подписан, судя по всему это последняя аликвота 20 ul EYFP-Mem.**
 
-*Note: 22 и 23 не подписаны, судя по всему 22 это последняя аликвота EYFP-Mem а 23 исходная тара EYFP-Mem, необходимо уточнить у Сони*
+## Wish list
+- Колба коническая 500 ml-1l x2-5
+- Чашка Петри x20
+- Пробирка x15
+- Пипетка 10 ml x5
+- Мерный цилиндр 250 ml x2
+- Мерный цилиндр 100 ml
+- 10 ul tips box x1
+- 200 ul tips box x2
+- 1000 ul tips box x2
+- epp. 1.5 ml
+- epp. 0.2 ml
+- LB medium 500 ml x3
+- LB agar (1.5%) 500 ml
+- Neomycin 50 mg/ml 0.5ml x5
+- ddH20 1.5 ml x10
+- EtOH 96% 100 ml
+- Falcon 50 ml x6
 
-<!-- <img src="pic/tfp_fluo_4_ch.png" width="95%"> -->
+*Note: суммарно на приготовление среды LB уйдет 20 г пептона и NaCl и 10 г дрожжевого экстракта.*
 
+## Plasmids preparing
+Для измерения концентрации и трансформации плазмиды центрифугированы \~3000 RPM 2', аликвотированы и объем доведен до 20 ul автоклавированной ddH2O.
+
+Plasmid   |Rack cell|Volume
+:--------:|:-------:|:----:
+HPCA-RFP  |1        |4 ul
+HPCA-CFP  |10       |2 ul
+HPCA-YFP  |20       |2 ul
+EYFP-Mem  |31       |4 ul
+CFP-YFP   |38       |1.5 ul
+NCALD-EYFP|46       |1 ul
+
+*Note: объемы подобраны с тем, чтобы итоговый объем для трансформации (100 pg) составлял 2-5 ul чтобы избежать ошибок дозирования и иметь несколько попыток трансформации.*
+
+Измерения концентрации NanoDrop проведено на объеме 1.5 ul, трижды на одной капле (результаты измерений в *init_conc.csv*).
+
+## Columns loading
+Загрузка 250 ml суспензии, OD600 2-3.
