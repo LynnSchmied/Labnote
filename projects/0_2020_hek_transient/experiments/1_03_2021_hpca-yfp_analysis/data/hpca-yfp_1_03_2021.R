@@ -16,8 +16,10 @@ df.fluo <- read.csv('results_fluo.csv') %>%  # 20.10.2020, results of test uncag
            summarise_all(list(mean, sd), na.rm = TRUE) %>%
            rename(mean = fn1, sd = fn2, frame = time)
 df.fluo$time <- as.numeric(df.fluo$frame) - 4
+write.csv(df.fluo, 'fluo_4.csv')
 
 df.yfp <- rbind(read.csv('results_10.csv'), read.csv('results_20.csv'))
+write.csv(df.yfp, 'hpca_yfp.csv')
 df.mask <- subset(df.yfp,
                   ((mask == 'up') & (cell == 'cell2_01')) |
                   ((mask == 'up') & (cell == 'cell7_01')))
