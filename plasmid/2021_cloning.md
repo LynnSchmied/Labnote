@@ -13,7 +13,7 @@ Plasmids cloning
 
 Набор для выделения Thermo Fisher GeneJET Plasmid Maxiprep Kit (#K0492).
 
-**Warning: kit expiry date is 09.2016(((**
+**Warning: kit expiry date is 09.2016**
 
 ## Selected plasmids
 Plasmid   |Signed C (ug/ul)|Approx. volume|Rack cell
