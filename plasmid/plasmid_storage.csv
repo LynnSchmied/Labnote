@@ -1,6 +1,9 @@
-Name,Native,Location,Mesurment 13.03.2020,Status
-EYFP-Mem,0.45 ug/ul,"+4 (114l, blue box)",109.5 +/- 0.8 ng/ul,-
-HPCA-TFP (orange lable),2 ug/ul,"+4 (114l, blue box)",189.6 +/- 3.9 ng/ul,+
-HPCA-TFP (yellow label),2.3 ug/ul,"+4 (114l, blue box)",276.3 +/- 1.2 ng/ul,+
-,,,,
-Update 27.07.2020,,,,
+Name,Native,Location,Volume
+HPCA-TFP (orange lable),189.6 ng/ul,"-20 (206, blue box)",~900 ul
+HPCA-TFP (yellow label),276.3 ng/ul,"-20 (206, blue box)",~900 ul
+HPCA-TagRFP,290.4 ng/ul,"-20 (206, blue box)",18.5 ul
+HPCA-TagRFP,290.4 ng/ul,"-20 (114r, Caша)",950 ul
+HPCA-EYFP,330 ng/ml,"-20 (206, blue box)",18.5 ul
+HPCA-EYFP,330 ng/ml,"-20 (114r, Caша)",950 ul
+,,,
+Update 6.03.2021,,,
