@@ -70,5 +70,9 @@ NCALD-EYFP|46       |1 ul
 
 Измерения концентрации NanoDrop проведено на объеме 1.5 ul, трижды на одной капле (результаты измерений в *init_conc.csv*).
 
+## Cloning
+### HPCA-TagRFP + HPCA-EYFP
+*2.03-6.03.2021*
+
 ## Columns loading
 Загрузка 250 ml суспензии, OD600 2-3.
