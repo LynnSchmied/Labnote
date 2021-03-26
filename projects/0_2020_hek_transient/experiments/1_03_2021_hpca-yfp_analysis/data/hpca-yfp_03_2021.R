@@ -96,6 +96,8 @@ dose.dep.mean <- left_join(time.slice.yfp, time.slice.fluo,
                  subset(select = c(power, mean_yfp, mean_fluo))
 dose.dep.rel <- dose.dep.mean
 
+write.csv(file = 'DR_50_17_03.csv', dose.dep.rel)
+
 ggplot(dose.dep.rel, aes(x = mean_fluo, y = mean_yfp, colour = as.factor(power))) +
   geom_line(size = 1) +
   scale_x_continuous(name = 'Fluo-4 ΔF/F0',
