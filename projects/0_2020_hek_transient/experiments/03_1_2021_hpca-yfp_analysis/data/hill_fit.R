@@ -15,18 +15,13 @@
 # Ka - ligand concentration producing half occupation
 #
 # Kd = Ka^n, Kd - dissociation constant
-
-require(ggplot2)
-require(ggpubr)
-require(dplyr)
-
 setwd('/home/astria/bio/note/projects/0_2020_hek_transient/experiments/1_03_2021_hpca-yfp_analysis/data')
 
 df.experimental <- read.csv('DR_50_17_03.csv') %>%
-                   filter(power == 50) %>%
-                   subset(select = c(mean_yfp, mean_fluo)) %>%
-                   rename(yfp = mean_yfp, fluo = mean_fluo) %>%
-                   mutate(norm_yfp = yfp/max(yfp))
+  filter(power == 50) %>%
+  subset(select = c(mean_yfp, mean_fluo)) %>%
+  rename(yfp = mean_yfp, fluo = mean_fluo) %>%
+  mutate(norm_yfp = yfp/max(yfp))
 
 ggscatter(df.experimental, x = 'fluo', y = 'yfp')
 max.fluo <- round(max(df.experimental$fluo), digit = 1)
@@ -60,8 +55,8 @@ ggplot() +
              aes(x = fluo, y = yfp), # fluo+x.shift, y = (yfp/scale)+y.shift),
              color = 'blue')
 
-ggplot(model.hill) +
-  geom_point(aes(x = c_noise, y = y_noise), alpha = .6)
+DRP <- ggplot(model.hill) +
+  geom_point(aes(x = c_noise, y = y_noise), alpha = .6) +
   stat_function(data = data.frame(x = c(start.val, end.val)),
                 aes(x),
                 fun = function(x){(x^n)/(Ka^n+x^n)},
