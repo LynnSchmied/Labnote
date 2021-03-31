@@ -1,9 +1,9 @@
 Name,Native,Location,Volume
 HPCA-TFP (orange lable),189.6 ng/ul,"-20 (206, blue box)",~900 ul
 HPCA-TFP (yellow label),276.3 ng/ul,"-20 (206, blue box)",~900 ul
-HPCA-TagRFP,290.4 ng/ul,"-20 (206, blue box)",18.5 ul
-HPCA-TagRFP,290.4 ng/ul,"-20 (114r, Caша)",950 ul
-HPCA-EYFP,330 ng/ml,"-20 (206, blue box)",18.5 ul
-HPCA-EYFP,330 ng/ml,"-20 (114r, Caша)",950 ul
+HPCA-TagRFP,290.4 ng/ul,"+4 (114l, blue box)",18.5 ul
+HPCA-TagRFP,290.4 ng/ul,"-5 (114r, Caша)",950 ul
+HPCA-EYFP,330 ng/ml,"+4 (11l, blue box)",~45 ul
+HPCA-EYFP,330 ng/ml,"-5 (114r, Caша)",18x18 ul
 ,,,
-Update 6.03.2021,,,
+Update 31.03.2021,,,
