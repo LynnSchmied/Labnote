@@ -95,7 +95,7 @@ sni.paw <- ggplot(filter(df.vf.stat, Group == 'SNI+AuM')) +
 ggarrange(sham.paw, sni.paw, ncol = 1, nrow = 2)
 
 
-ggplot(filter(df.vf.stat, Paw == 'R')) +
+ggplot(filter(df.vf.stat, Paw == 'R' & Day != -7)) +
   geom_vline(xintercept = 5) +
   geom_point(aes(x = Day,
                  y = mean,
@@ -113,4 +113,4 @@ ggplot(filter(df.vf.stat, Paw == 'R')) +
   labs(title = 'Operated paw',
        y = 'Threshold (g)') +
   scale_color_jco() +
-  theme_minimal()
+  theme_minimal(text=element_text(family="Arial"))
