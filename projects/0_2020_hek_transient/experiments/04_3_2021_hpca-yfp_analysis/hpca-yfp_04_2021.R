@@ -4,7 +4,11 @@
 require(dplyr)
 require(tidyr)
 require(purrr)
+
+require(TTR)
+
 require(ggplot2)
+require(ggpubr)
 require(ggsci)
 
 setwd('/home/astria/bio/note/projects/0_2020_hek_transient/experiments/04_3_2021_hpca-yfp_analysis')
@@ -21,24 +25,39 @@ df.yfp <- rbind(read.csv('results_3_04.csv')) %>%  # ,read.csv('results_17_03.cs
           mutate(power = as.factor(power)) %>%
           mutate(cell = as.factor(cell)) %>%
           mutate(date = as.factor(date)) %>%
-          mutate(replication = as.factor(replication)) %>%
-          subset(select = c(cell, replication, power, time, mask, delta, rel))
+          mutate(rep = as.factor(rep)) %>%
+          subset(select = c(ID, cell, date, rep, power, time, mask, delta, rel))
+
+df.yfp.03 <- read.csv('results_17_03.csv') %>%
+             mutate(power = as.factor(power)) %>%
+             mutate(cell = as.factor(cell)) %>%
+             mutate(date = as.factor(date)) %>%
+             mutate(rep = as.factor(rep)) %>%
+             subset(select = c(ID, cell, date, rep, power, time, mask, delta, rel))
 
 ##### RAW #####
 # REPEATED STIMULATIONS
-selected.power <- '100'
-selected.mask <- 'cell'
+selected.power <- '50'
+selected.mask <- 'up'
 
 df.power.norm <- df.yfp %>%
                  filter(mask == selected.mask,
                         power == selected.power) %>%
-                 subset(select = c(cell, replication, time, delta)) %>%
-                 group_by(cell, replication) %>%
+                 subset(select = c(ID, cell, rep, time, delta)) %>%
+                 group_by(cell, rep) %>%
                  mutate(delta_norm = delta / max(delta))
 
-ggplot(data = df.power.norm) +
+# 17.03.2021 data
+df.power.norm.03 <- df.yfp.03 %>%
+  filter(mask == selected.mask,
+         power == selected.power) %>%
+  subset(select = c(ID, cell, rep, time, delta)) %>%
+  group_by(cell, rep) %>%
+  mutate(delta_norm = delta / max(delta))
+
+ggplot(data = df.power.norm.03) +
   geom_vline(xintercept = 0) +
-  geom_line(aes(x=time, y= delta_norm, colour=replication),
+  geom_line(aes(x=time, y= delta_norm, colour=rep),
             size=1.2) +
   facet_grid(rows = vars(cell)) +
   scale_x_continuous(name = 'Time (s)',
@@ -54,39 +73,79 @@ ggplot(data = df.power.norm) +
 
 # DROP BAD CELLS
 df.yfp.drop <- df.yfp %>%
-               group_by(cell, replication)
-               
-          
+               filter(ID == 'cell1_01_3_04' |  # 405 nm 50%
+                      ID == 'cell1_02_3_04' |
+                      ID == 'cell1_03_3_04' |
+                      ID == 'cell10_01_3_04'|
+                      ID == 'cell4_01_3_04' |
+                      ID == 'cell7_01_3_04' |
+                      ID == 'cell2_01_3_04' |  # 405 nm 75%
+                      ID == 'cell2_02_3_04' |
+                      ID == 'cell2_03_3_04' |
+                      ID == 'cell8_01_3_04' |
+                      ID == 'cell8_02_3_04' |
+                      ID == 'cell8_03_3_04' |
+                      ID == 'cell3_01_3_04' |  # 405 nm 100%
+                      ID == 'cell3_02_3_04' |
+                      ID == 'cell6_01_3_04' |
+                      ID == 'cell9_01_3_04')
+
+df.yfp.drop.03 <- df.yfp.03 %>%
+                  filter(ID == 'cell7_01_17_03'  |  # 405 nm 20%
+                         ID == 'cell9_01_17_03'  |
+                         ID == 'cell10_01_17_03' |  # 405 nm 50%
+                         ID == 'cell12_01_17_03' |
+                         ID == 'cell13_01_17_03' |
+                         ID == 'cell20_01_17_03') 
+# ALL GOOD CELLS               
+df.yfp.good <- rbind(df.yfp.drop, df.yfp.drop.03)        
 
 # DOSE DEP
 start.time <- 5
 end.time <- 95
+decim.num <- 10
 
-time.slice.yfp <- df.yfp.norm %>%
-  filter(mask == selected.mask,
-         time>=start.time,
-         time<=end.time) %>%
-  subset(select = c(cell, norm, time)) %>%
-  rename(int_yfp = norm)
+w.fun <- function(x, a, b){(exp(-x/a)+b)/max(exp(-x/a)+b)}
+a <- 30
+b <- 5
+
+ggscatter(data.frame(y = w.fun(seq(0, 100, 1), a, b), x = seq(0, 100, 1)),
+          x = 'x', y = 'y')
+
+time.slice.yfp <- df.yfp.good %>%
+                  filter(power == selected.power,
+                         mask == selected.mask,
+                         time>=start.time,
+                         time<=end.time) %>%
+                  subset(select = c(ID, time, delta)) %>%
+                  group_by(ID) %>%
+                  mutate(norm = delta/max(delta)) %>%
+                  mutate(dec = HMA(norm, n = 10)) %>%  # w = w.fun(seq(0, length(norm)-1), a, b))
+                  rename(yfp = delta)
 time.slice.fluo <- df.fluo %>%
-  filter(power == selected.power,
-         time>=start.time,
-         time<=end.time) %>%
-  subset(select = c(mean, time)) %>%
-  rename(int_fluo = mean)
+                   filter(power == selected.power,
+                   time>=start.time,
+                   time<=end.time) %>%
+                   subset(select = c(mean, time)) %>%
+                   rename(fluo = mean)
+
 dose.dep.norm <- left_join(time.slice.yfp, time.slice.fluo,
                            by = c('time')) %>%
-  subset(select = c(cell, int_yfp, int_fluo))
+                 subset(select = c(ID, yfp, norm, dec, fluo))
 
 ggplot() +
   geom_line(data = dose.dep.norm, 
-            aes(x = int_fluo, y = int_yfp, colour = cell),
+            aes(x = fluo, y = dec, colour = ID),
             size = 1) +
+  geom_line(data = dose.dep.norm, 
+            aes(x = fluo, y = norm, colour = ID),
+            size = 0.2,
+            linetype = 5) +
   scale_x_continuous(name = 'Fluo-4 ΔF/F0',
-                     limits = c(0.3, 2),
+                     limits = c(0.5, 2),
                      breaks = seq(0, 10, .1)) +
   scale_y_continuous(name = 'Normalized HPCA-YFP ΔF/F0',
-                     limits = c(-0.1, 1),
+                     limits = c(-0.5, 1),
                      breaks = seq(-1, 1, .1)) +
   labs(title = sprintf("Dose dep, 405 nm power %s", selected.power),
        colour = 'Cell') +
