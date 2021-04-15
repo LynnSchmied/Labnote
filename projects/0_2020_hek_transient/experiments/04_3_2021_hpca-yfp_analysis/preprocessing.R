@@ -27,6 +27,7 @@ require(ggsci)
 
 setwd('/home/astria/bio/note/projects/0_2020_hek_transient/experiments/04_3_2021_hpca-yfp_analysis')
 
+#### DATA PREPROCESSING ####
 df.fluo <- read.csv('results_fluo.csv') %>%
            subset(select = c(power, time, int)) %>%
            group_by(time, power) %>%
@@ -54,7 +55,6 @@ df.yfp.04.drop <- df.yfp.04 %>%
   filter(ID == 'cell1_01_3_04' |  # 405 nm 50%
            ID == 'cell1_02_3_04' |
            ID == 'cell1_03_3_04' |
-           ID == 'cell10_01_3_04'|
            ID == 'cell4_01_3_04' |
            ID == 'cell7_01_3_04' |
            ID == 'cell2_01_3_04' |  # 405 nm 75%
@@ -73,8 +73,7 @@ df.yfp.03.drop <- df.yfp.03 %>%
            ID == 'cell9_01_17_03'  |
            ID == 'cell10_01_17_03' |  # 405 nm 50%
            ID == 'cell12_01_17_03' |
-           ID == 'cell13_01_17_03' |
-           ID == 'cell20_01_17_03') 
+           ID == 'cell13_01_17_03') 
 # ALL GOOD CELLS               
 df.yfp <- rbind(df.yfp.04.drop, df.yfp.03.drop)        
 
@@ -218,33 +217,34 @@ ggplot() +
 
 
 # DOSE DEP
-start.time <- 4
-end.time <- 100
+start.time <- 7
+end.time <- 75
 
 time.slice.yfp <- df.mean.yfp %>%
                   filter(mask == selected.mask,
                          time>=start.time,
                          time<=end.time) %>%
-                  subset(select = c(power, mean, time)) %>%
-                  rename(mean_yfp = mean)
+                  subset(select = c(power, mean, sd, time)) %>%
+                  rename(mean_yfp = mean, sd_yfp = sd)
 time.slice.fluo <- df.fluo %>%
                    filter(time>=start.time & time<=end.time) %>%
                    subset(select = c(power, mean, time)) %>%
                    rename(mean_fluo = mean)
 dose.dep.mean <- left_join(time.slice.yfp, time.slice.fluo,
                             by = c('power', 'time')) %>%
-                 subset(select = c(power, mean_yfp, mean_fluo))
-dose.dep.rel <- dose.dep.mean
+                 subset(select = c(power, mean_yfp, sd_yfp, mean_fluo))
+                 # group_by(power) %>%
+                 # mutate(mean_yfp = (mean_yfp - min(mean_yfp))/(max(mean_yfp)-min(mean_yfp)))
 
-write.csv(file = 'DR_50_17_03.csv', dose.dep.rel)
-
-ggplot(dose.dep.rel, aes(x = mean_fluo, y = mean_yfp, colour = as.factor(power))) +
-  geom_line(size = 1) +
+ggplot(filter(dose.dep.mean, power != '75')) +
+  geom_line(aes(x = mean_fluo, y = mean_yfp,
+                colour = power),
+            size = 1) +
   scale_x_continuous(name = 'Fluo-4 ΔF/F0',
-                     limits = c(0.2, 2.1),
-                     breaks = seq(-100, 100, .1)) +
+                     limits = c(0.2, 4),
+                     breaks = seq(-100, 100, .5)) +
   scale_y_continuous(name = 'HPCA-YFP ΔF/F0',
-                     limits = c(0, 0.35),
+                     limits = c(0, 0.45),
                      breaks = seq(-100, 100, 0.05)) +
   labs(title = "Dose dep mean",
        color = '405 nm power (%)') + 
