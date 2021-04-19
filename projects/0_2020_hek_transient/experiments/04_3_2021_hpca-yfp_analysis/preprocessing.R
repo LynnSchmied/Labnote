@@ -62,7 +62,6 @@ df.yfp.04.drop <- df.yfp.04 %>%
            ID == 'cell2_03_3_04' |
            ID == 'cell8_01_3_04' |
            ID == 'cell8_02_3_04' |
-           ID == 'cell8_03_3_04' |
            ID == 'cell3_01_3_04' |  # 405 nm 100%
            ID == 'cell3_02_3_04' |
            ID == 'cell6_01_3_04' |
@@ -75,33 +74,32 @@ df.yfp.03.drop <- df.yfp.03 %>%
            ID == 'cell12_01_17_03' |
            ID == 'cell13_01_17_03') 
 # ALL GOOD CELLS               
-df.yfp <- rbind(df.yfp.04.drop, df.yfp.03.drop)        
+df.yfp <- rbind(df.yfp.03.drop, df.yfp.04.drop)        
 
 
 ##### RAW #####
 # REPEATED STIMULATIONS
-selected.power <- '50'
+selected.power <- '20'
 selected.mask <- 'up'
 
-df.power.norm <- df.yfp %>%
+df.yfp.norm <- df.yfp %>%
                  filter(power == selected.power,
                         mask == selected.mask) %>%
                  subset(select = c(ID, date, cell, mask, rep, time, rel)) %>%
                  group_by(cell, rep, mask) %>%
                  mutate(delta_norm = rel / max(rel))
 
-ggplot(data = df.power.norm) +
+ggplot(filter(df.yfp, power == selected.power, mask == selected.mask)) +
   geom_vline(xintercept = 0) +
-  geom_line(aes(x=time, y= delta_norm, colour=ID),
+  geom_line(aes(x=time, y= rel, colour=ID),
             size=1.2) +
   scale_x_continuous(name = 'Time (s)',
                     limits = c(-20, 90),
                    breaks = seq(-100, 100, 5)) +
-  scale_y_continuous(name = 'Normalized ΔF/F0',
-                     limits = c(-0.5, 1),
-                     breaks = seq(-100, 100, 0.5)) +
+  scale_y_continuous(name = 'HPCA-YFP ΔF/F0',
+                     breaks = seq(-100, 100, 0.1)) +
   labs(title = sprintf("Mask %s, 405 nm power %s", selected.mask, selected.power),
-       colour = 'Stimulation') +
+       colour = 'Recording ID') +
   scale_color_jco() +
   scale_fill_jco() +
   theme_light() +
@@ -110,6 +108,22 @@ ggplot(data = df.power.norm) +
 
 #  facet_grid(rows = vars(cell))
 
+# MAXIMUM INCREASE BOXPLOT
+df.yfp.max <- df.yfp %>%
+              subset(select = c(ID, power, time, mask, rel)) %>%
+              group_by(power, mask, ID) %>%
+              filter(rel == max(rel) & mask != 'cell')
+
+kruskal.test(rel ~ power, data = filter(df.yfp.max, mask == 'up'))
+
+ggplot(df.yfp.max) +
+  geom_boxplot(aes(x = power, y = rel, fill = power),
+               alpha = .6) +
+  geom_point(aes(x = power, y = rel, color = power)) +
+  facet_grid(cols = vars(mask)) +
+  scale_color_jco() +
+  scale_fill_jco() +
+  theme_light()
 
 # DOSE DEP
 start.time <- 5
@@ -200,7 +214,25 @@ ggplot() +
        fill = '405 nm power (%)') +
   scale_color_jco() +
   scale_fill_jco() +
-  theme_minimal()
+  theme_light() +
+  theme(legend.position = 'top',
+        legend.justification = 'left')
+
+# MAXIMUM INCREASE BARPLOT
+df.mean.max <- df.mean.yfp %>%
+               group_by(power, mask) %>%
+               filter(mean == max(mean) & mask != 'cell')
+
+selected.mask <- 'up'
+ggplot(df.mean.max,
+       aes(x = power, y = mean, fill = power)) + 
+  geom_bar(stat = "identity", alpha = .5) +
+  geom_point(data = df.yfp.max,
+             aes(x = power, y = rel)) +
+  facet_grid(cols = vars(mask)) +
+  scale_fill_jco()
+  
+               
 
 #geom_line(data = subset(df.fluo, power == c('20', '50')),
 #          aes(x = time, y = mean/coeff, colour = power, fill = power),
