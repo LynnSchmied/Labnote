@@ -20,6 +20,7 @@ require(tidyr)
 require(purrr)
 
 require(TTR)
+require(rstatix)
 
 require(ggplot2)
 require(ggpubr)
@@ -41,14 +42,14 @@ df.yfp.04 <- rbind(read.csv('results_3_04.csv')) %>%  # ,read.csv('results_17_03
           mutate(cell = as.factor(cell)) %>%
           mutate(date = as.factor(date)) %>%
           mutate(rep = as.factor(rep)) %>%
-          subset(select = c(ID, cell, date, rep, power, time, mask, delta, rel))
+          subset(select = c(ID, cell, date, rep, power, time, mask, delta, rel, int))
 
 df.yfp.03 <- read.csv('results_17_03.csv') %>%
              mutate(power = as.factor(power)) %>%
              mutate(cell = as.factor(cell)) %>%
              mutate(date = as.factor(date)) %>%
              mutate(rep = as.factor(rep)) %>%
-             subset(select = c(ID, cell, date, rep, power, time, mask, delta, rel))
+             subset(select = c(ID, cell, date, rep, power, time, mask, delta, rel, int))
 
 # DROP BAD CELLS
 df.yfp.04.drop <- df.yfp.04 %>%
@@ -79,7 +80,7 @@ df.yfp <- rbind(df.yfp.03.drop, df.yfp.04.drop)
 
 ##### RAW #####
 # REPEATED STIMULATIONS
-selected.power <- '20'
+selected.power <- '50'
 selected.mask <- 'up'
 
 df.yfp.norm <- df.yfp %>%
@@ -122,6 +123,52 @@ ggplot(df.yfp.max) +
   geom_point(aes(x = power, y = rel, color = power)) +
   facet_grid(cols = vars(mask)) +
   scale_color_jco() +
+  scale_fill_jco() +
+  theme_light()
+
+# TRANS
+df.trans <- df.yfp %>%
+            filter(mask == 'up') %>%
+            subset(select = c(ID, power, time, delta))
+
+selected.power <- '75'
+
+ggplot(filter(df.trans, power == selected.power)) +
+  geom_line(aes(x = time, y = delta, colour = ID), size = 1.2) +
+  scale_x_continuous(name = 'Time (s)',
+                     limits = c(-20, 90),
+                     breaks = seq(-100, 100, 5)) +
+  scale_y_continuous(name = 'HPCA-YFP ΔF/F0',
+                     breaks = seq(-100, 100, 0.1)) +
+  labs(title = sprintf("Up/Cell, 405 nm power %s", selected.power),
+       colour = 'Recording ID') +
+  scale_color_jco() +
+  scale_fill_jco() +
+  theme_light() +
+  theme(legend.position = 'top',
+        legend.justification = 'left')
+
+df.trans.max <- df.trans %>%
+                group_by(ID, power) %>%
+                mutate(max_trans = max(delta)) %>%
+                subset(power != '20', select = c(power, max_trans)) %>%
+                unique()
+
+kruskal.test(trans_delta ~ power, data = df.trans.delta)
+
+ggplot(df.trans.max, aes(x = power, y = max_trans, fill = power)) +
+  geom_boxplot() +
+  stat_compare_means(method = "wilcox.test",
+                     comparisons = list(c('50', '75'),
+                                        c('75', '100'),
+                                        c('50', '100'))) +
+  scale_y_continuous(limits = c(0.15, .36),
+                     breaks = seq(-1, 1, 0.05)) +
+  labs(title = sprintf("Translocations", selected.mask),
+       x = 'Power (%)', 
+       y = 'ΔF',
+       colour = '405 nm power (%)',
+       fill = '405 nm power (%)') +
   scale_fill_jco() +
   theme_light()
 
@@ -207,8 +254,7 @@ ggplot() +
   scale_x_continuous(name = 'Time (s)',
                      limits = c(-20, 90),
                      breaks = seq(-100, 100, 5)) +
-  scale_y_continuous(name = 'HPCA-YFP ΔF/F0',
-                     breaks = seq(-100, 100, 0.05)) +
+  scale_y_continuous(name = 'HPCA-YFP ΔF/F0') +
   labs(title = sprintf("Mask %s mean", selected.mask),
        colour = '405 nm power (%)',
        fill = '405 nm power (%)') +
@@ -224,13 +270,21 @@ df.mean.max <- df.mean.yfp %>%
                filter(mean == max(mean) & mask != 'cell')
 
 selected.mask <- 'up'
-ggplot(df.mean.max,
+ggplot(filter(df.mean.max, mask == selected.mask, power != '20'),
        aes(x = power, y = mean, fill = power)) + 
   geom_bar(stat = "identity", alpha = .5) +
-  geom_point(data = df.yfp.max,
-             aes(x = power, y = rel)) +
-  facet_grid(cols = vars(mask)) +
-  scale_fill_jco()
+  geom_errorbar(aes(x = power, ymin = mean - sd, ymax = mean + sd), width = 0.25) +
+  geom_point(data = filter(df.yfp.max, mask == selected.mask, power != '20'),
+             aes(x = power, y = rel), size = 1.5) +
+  scale_y_continuous(breaks = seq(-1, 1, 0.1)) +
+  labs(title = sprintf("Mask %s maximum insertion", selected.mask),
+       x = 'Power (%)', 
+       y = 'HPCA-YFP ΔF/F0',
+       colour = '405 nm power (%)',
+       fill = '405 nm power (%)') +
+  scale_color_jco() +
+  scale_fill_jco() +
+  theme_light()
   
                
 
@@ -284,7 +338,35 @@ ggplot(filter(dose.dep.mean, power != '75')) +
   scale_fill_jco() +
   theme_minimal()
 
-# ggsave(sprintf('dose_dep_mean.png', selected.power),
-#        width = 30, height = 15, units = 'cm')
+# HILL FIT
+hill.mod <- lm(log10(mean_yfp/(1-mean_yfp)) ~ log10(mean_fluo),
+               data = filter(dose.dep.mean, power == '50'))
 
+model.n <- hill.mod$coefficients[[2]]
+intercept <- hill.mod$coefficients[[1]]
+model.ka <- intercept/model.n
 
+df.hill <- dose.dep.mean %>%
+           filter(power != '75') %>%
+           group_by(power) %>%
+           mutate(log_y = log10(mean_yfp/(1-mean_yfp))) %>%
+           mutate(log_c = log10(mean_fluo)) %>%
+           do(tidy(lm(log_y ~ log_c, .)))
+
+ggplot(filter(dose.dep.mean, power != '75'),
+       aes(y = log10(mean_yfp/(1-mean_yfp)),
+           x = log10(mean_fluo),
+           color = power,
+           fill = power))+
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 0) +
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  labs(x = 'log(Fluo-4 ΔF/F0)',
+       y = 'log(HPCA-YFP ΔF/F0 / (1-HPCA-YFP ΔF/F0))',
+       title = 'Hill log form',
+       color = '405 nm power (%)',
+       fill = '405 nm power (%)') + 
+  scale_color_jco() +
+  scale_fill_jco() +
+  theme_minimal()

@@ -6,7 +6,7 @@
 #    Ka^n + [C]^n
 #
 #      y
-# log(---) = log([C]) + n*log(Ka)   linear form
+# log(---) = n*log([C]) + n*log(Ka)   linear form
 #     1-Y
 #
 # Y - fraction of occupied target protein
@@ -23,8 +23,8 @@ require(dplyr)
 setwd('/home/astria/bio/note/projects/0_2020_hek_transient/experiments/03_26_2021_hill_analysis/data')
 set.seed(204)
 
-Ka <- 0.3
-n <- 4
+Ka <- 0.5
+n <- 0.5
 
 start.val <- 0
 end.val <- 1
@@ -147,3 +147,4 @@ HP <- ggplot(model.hill) +
 ggarrange(DRP, HP, ncol = 2, nrow = 1)  # print two panel plot
 summary(hill.uni.lm)  # print linear model data in console
 summary(hill.exp.lm)
+
