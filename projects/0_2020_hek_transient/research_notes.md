@@ -312,6 +312,7 @@ dxy = 275.5 nm
 - http://www.hi.helsinki.fi/amu/AMU%20Cf_tut/Opt_Pinhole.htm
 - https://www.leica-microsystems.com/science-lab/confocal-optical-section-thickness/
 - https://www.leica-microsystems.com/science-lab/pinhole-effect-in-confocal-microscopes/
+- https://www.biodip.de/wiki/Airy_unit
 
 
 
