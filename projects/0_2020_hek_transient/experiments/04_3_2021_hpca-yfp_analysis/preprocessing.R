@@ -71,24 +71,17 @@ df.yfp.04.drop <- df.yfp.04 %>%
 df.yfp.03.drop <- df.yfp.03 %>%
   filter(ID == 'cell7_01_17_03'  |  # 405 nm 20%
            ID == 'cell9_01_17_03'  |
-           ID == 'cell10_01_17_03' |  # 405 nm 50%
-           ID == 'cell12_01_17_03' |
-           ID == 'cell13_01_17_03') 
+           ID == 'cell10_01_17_03')  # |  # 405 nm 50%
+           # ID == 'cell12_01_17_03' |
+           # ID == 'cell13_01_17_03') 
 # ALL GOOD CELLS               
 df.yfp <- rbind(df.yfp.03.drop, df.yfp.04.drop)        
 
 
 ##### RAW #####
 # REPEATED STIMULATIONS
-selected.power <- '50'
+selected.power <- '100'
 selected.mask <- 'up'
-
-df.yfp.norm <- df.yfp %>%
-                 filter(power == selected.power,
-                        mask == selected.mask) %>%
-                 subset(select = c(ID, date, cell, mask, rep, time, rel)) %>%
-                 group_by(cell, rep, mask) %>%
-                 mutate(delta_norm = rel / max(rel))
 
 ggplot(filter(df.yfp, power == selected.power, mask == selected.mask)) +
   geom_vline(xintercept = 0) +
@@ -104,10 +97,17 @@ ggplot(filter(df.yfp, power == selected.power, mask == selected.mask)) +
   scale_color_jco() +
   scale_fill_jco() +
   theme_light() +
-  theme(legend.position = 'top',
-              legend.justification = 'left')
+  theme(legend.position = 'bottom',
+        text=element_text(family="Times New Roman", face="bold", size=12))
 
 #  facet_grid(rows = vars(cell))
+
+df.yfp.norm <- df.yfp %>%
+  filter(power == selected.power,
+         mask == selected.mask) %>%
+  subset(select = c(ID, date, cell, mask, rep, time, rel)) %>%
+  group_by(cell, rep, mask) %>%
+  mutate(delta_norm = rel / max(rel))
 
 # MAXIMUM INCREASE BOXPLOT
 df.yfp.max <- df.yfp %>%
@@ -178,12 +178,12 @@ end.time <- 95
 decim.num <- 10
 selected.power <- '100'
 
-w.fun <- function(x, a, b){(exp(-x/a)+b)/max(exp(-x/a)+b)}
-a <- 30
-b <- 5
-
-ggscatter(data.frame(y = w.fun(seq(0, 100, 1), a, b), x = seq(0, 100, 1)),
-          x = 'x', y = 'y')
+# w.fun <- function(x, a, b){(exp(-x/a)+b)/max(exp(-x/a)+b)}
+# a <- 30
+# b <- 5
+#
+# ggscatter(data.frame(y = w.fun(seq(0, 100, 1), a, b), x = seq(0, 100, 1)),
+#          x = 'x', y = 'y')
 
 time.slice.yfp <- df.yfp.good %>%
                   filter(power == selected.power,
