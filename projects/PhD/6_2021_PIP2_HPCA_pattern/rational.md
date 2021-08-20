@@ -32,7 +32,7 @@ Inhomogeneity in HPCA insertions pattern  and translocation amplitudes in compac
 - **Неравномерности паттерна встраивания обусловлена сродством с PIP2 локализованном в компактных рафтах**
   Потенциально снижение количества PIP2 в мембране должно приводить к снижению амплитуды транслокацый HPCA
 
-## Experimental plan
+## Research plan
 - **EYFP-Mem + HPCA-TagRFP**
   Характер распределения сайтов встраивания HPCA
 - **EYFP-Mem + PH-CFP**
