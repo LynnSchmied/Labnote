@@ -76,7 +76,7 @@ NCALD-EYFP |46       |1 ul  |67.5
 *2.03-6.03.2021*
 Объем для трансформации - 3 ul (\~105 ng).
 
-**C = 330 ng/ul**
+**Cfin = 330 ng/ul**
 
 <img src="pic/HPCA-TagRFP_1.jpg" width="100%">|<img src="pic/HPCA-TagRFP_1-10.jpg" width="100%">
 :-:|:-:
@@ -87,7 +87,7 @@ x1 (384 colonies)|x1/10 (47 colonies)
 *2.03-6.03.2021*
 Объем для трансформации - 2 ul (\~100 ng).
 
-**C = 280 ng/ul**
+**Cfin = 280 ng/ul**
 
 <img src="pic/HPCA-EYFP_1.jpg" width="100%">|<img src="pic/HPCA-EYFP_1-10.jpg" width="100%">
 :-:|:-:
