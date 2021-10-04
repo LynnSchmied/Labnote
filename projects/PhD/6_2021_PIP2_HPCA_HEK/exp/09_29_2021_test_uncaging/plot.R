@@ -25,6 +25,14 @@ setwd('/home/astria/bio/note/projects/PhD/6_2021_PIP2_HPCA_HEK/exp/09_29_2021_te
 df.fluo <- read.csv('results_29_09.csv') %>%
            mutate(power = as.factor(power))
 
+df.fluo.abs.baseline <- df.fluo %>%
+                        select(power, time, int) %>%
+                        filter(time < 0) %>%
+                        group_by(time, power) %>%
+                        summarise_all(list(mean, sd), na.rm = TRUE) %>%
+                        rename(mean = fn1, sd = fn2) %>%
+                        ungroup()
+
 df.fluo.mean <- df.fluo %>%
                 select(power, time, delta) %>%
                 group_by(time, power) %>%
@@ -32,7 +40,7 @@ df.fluo.mean <- df.fluo %>%
                 rename(mean = fn1, sd = fn2) %>%
                 ungroup()
 
-time.list <- c(0, 15, 60)
+time.list <- c(0, 20, 60)
 df.fluo.crop <- df.fluo %>%
   select(power, delta, time) %>%
   filter(time %in% time.list) %>%
@@ -65,7 +73,7 @@ names(col.list) <- power.list
 ##### PLOT #####
 # line plot
 line.plt <- ggplot(df.fluo.mean) +
-  geom_line(aes(x = time, y = mean, colour = power, fill = power),
+  geom_line(aes(x = time, y = mean, colour = power),
             size = line_size) +
   geom_ribbon(aes(x = time,
                   ymin = mean-sd,
@@ -80,6 +88,34 @@ line.plt <- ggplot(df.fluo.mean) +
                      breaks = seq(-100, 100, 10),
                      expand = c(0,0)) +
   scale_y_continuous(name = 'ΔF/F0',
+                     breaks = seq(-100, 100, .5),
+                     expand = c(0,0)) +
+  labs(colour = 'Power (%)', fill='Power (%)') +
+  scale_color_manual(values = col.list) +
+  scale_fill_manual(values = col.list) +
+  theme_classic() +
+  theme(legend.position = 'none',
+        text = element_text(family=font_family, face="bold", size=font_size))
+
+
+# abs intensity line plot
+abs.plt <- ggplot(df.fluo.abs.baseline) +
+  geom_line(aes(x = time, y = mean, colour = power),
+            size = line_size) +
+  geom_ribbon(aes(x = time,
+                  ymin = mean-sd,
+                  ymax = mean+sd,
+                  fill = power,
+                  colour = power),
+              alpha=.15,
+              size=0) +
+  scale_x_continuous(name = 'Time (s)',
+                     limits = c(-20, 0),
+                     breaks = seq(-100, 100, 5),
+                     expand = c(0,0)) +
+  scale_y_continuous(name = 'a.u.',
+                     limits = c(50, 250),
+                     breaks = seq(-100, 500, 25),
                      expand = c(0,0)) +
   labs(colour = 'Power (%)', fill='Power (%)') +
   scale_color_manual(values = col.list) +
@@ -97,6 +133,7 @@ point.box <- ggplot(df.fluo.crop, aes(x = power, y = delta)) +
   labs(fill = 'Power (%)',
        x = 'Power (%)',
        y = 'ΔF/F0') +
+  scale_y_continuous(breaks = seq(-100, 100, .5)) +
   scale_color_manual(values = col.list) +
   scale_fill_manual(values = col.list) +
   theme_classic() +
@@ -131,14 +168,19 @@ dd.plt <- ggplot(df.fluo.mean %>%
 
 
 # combine plot
+line.abs <- ggarrange(line.plt, abs.plt, 
+                     labels = c("A", "B"),
+                     ncol = 2, nrow = 1,
+                     widths=c(0.75, 0.25))
+
 box.dd <- ggarrange(point.box, dd.plt,
-                    labels = c("B", "C"),
+                    labels = c("C", "D"),
                     ncol = 2, nrow = 1)
 
-cmb.plt <- ggarrange(line.plt, box.dd, 
-                      labels = c("A", ""),
-                      ncol = 1, nrow = 2)
+fin.plt <- ggarrange(line.abs, box.dd,
+                     ncol = 1, nrow = 2)
+
 ggsave('fin_plt.png',
-       cmb.plt,
+       fin.plt,
        width = 14,
        height = 8)
