@@ -57,6 +57,8 @@ df.fluo.stat.group <- df.fluo.crop %>%
   kruskal_test(delta ~ power) %>%
   add_significance("p")
 
+# Bonferoni-Holm adjastment
+# https://www.statisticshowto.com/holm-bonferroni-method/
 df.fluo.stat.pair <- df.fluo.crop %>%
   group_by(time) %>%
   pairwise_wilcox_test(delta ~ power,
